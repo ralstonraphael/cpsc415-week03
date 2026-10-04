@@ -11,14 +11,14 @@ CPSC 415 Week 3 lab: a command-line support-message classifier that asks a hoste
 # build:  none (Python 3 standard library only)
 # run:    python3 classify.py "message text"
 # eval:   python3 eval.py            # reads cases.json
-# env:    CHAT_BASE_URL  CHAT_MODEL  OPENROUTER_API_KEY
+# env:    CHAT_BACKEND (http | claude-cli)  CHAT_MODEL  [http: CHAT_BASE_URL  OPENROUTER_API_KEY]
 ```
 
 ## Conventions
 - Python 3, standard library only. No third-party packages.
-- Default model `minimax/minimax-m3`; second model for the comparison `xiaomi/mimo-v2.6-flash`. Change only `CHAT_MODEL` between runs.
+- Models compared: `claude-haiku-4-5-20251001` and `claude-sonnet-5`, through `CHAT_BACKEND=claude-cli` (no OpenRouter key). Change only `CHAT_MODEL` between runs. The `http` backend (OpenRouter) is the default route.
 - File names are lowercase with underscores. Cases live in `cases.json`; eval results live in `CHECKS.md`.
-- The API key is read from `OPENROUTER_API_KEY` in the environment. It never appears in a file, a commit, or program output.
+- For the `http` backend the API key is read from `OPENROUTER_API_KEY` in the environment. It never appears in a file, a commit, or program output.
 
 ## Working rules
 

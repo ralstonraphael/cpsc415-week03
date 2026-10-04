@@ -8,9 +8,9 @@ Someone triaging a shared support inbox that gets a mix of billing questions, bu
 
 ## Constraints
 - Python standard library only (see the spec for the language decision).
-- Calls a hosted model through an OpenAI-compatible chat endpoint. Endpoint, model, and key come from environment variables, so changing models means changing one variable.
+- Calls a hosted model. The default route is an OpenAI-compatible chat endpoint, with the endpoint, model, and key taken from environment variables. The author has a Claude subscription and no OpenRouter key, so the program can also reach Claude models through the `claude` command-line tool. Either way, changing models means changing one variable.
 - No API key in the repository, in a commit, or in any output.
-- Cost ceiling: a full eval (five cases, two models) should cost a few cents at most.
+- Cost ceiling: a full eval (five cases, two models) should cost a few cents at most, at list price.
 - Due Monday, October 5, 2026, 1:30 PM.
 
 ## Not in scope
