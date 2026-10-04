@@ -27,7 +27,8 @@ Someone triaging a shared support inbox that gets a mix of billing questions, bu
 4. If a model's reply is not valid JSON, has a value outside the allowed set, or is empty, that case is reported as FAIL and the eval carries on to the next case instead of crashing.
 
 ## Open questions
-- Urgency scale: low, medium, high. Is a three-level scale enough, or should it have more levels?
-- The ambiguous case: which two categories should it accept?
+None remaining. Settled before the spec:
+- Urgency has three levels: low, medium, high. That is enough to route a message and keeps the eval checkable.
+- The ambiguous case accepts `billing` or `technical`: a plan upgrade that did not take effect is either a payment problem or an account bug.
 
-**Approved by:** _pending_
+**Approved by:** Ralston Raphael, October 4, 2026
