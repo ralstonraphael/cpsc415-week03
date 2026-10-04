@@ -38,3 +38,5 @@ A first test call on `claude-haiku-4-5-20251001` used about 550 input and 380 ou
 
 ## Out of scope
 Carried over from the intent: replying to customers, any inbox integration or storage, a web interface, languages other than English, retries, rate limiting and caching, depending on built-in structured output, automated tests beyond the five-case eval, a written plan, and pull requests.
+
+**Approved by:** Ralston Raphael, October 4, 2026, against `intent/classifier.md`
