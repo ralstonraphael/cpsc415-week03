@@ -1,0 +1,33 @@
+[
+  {
+    "id": "billing-clear",
+    "message": "I was charged twice for my subscription this month. Could you refund the extra $29?",
+    "accept": ["billing"],
+    "purpose": "Baseline: a plain payment problem with money words in it."
+  },
+  {
+    "id": "technical-clear",
+    "message": "Our whole team has been locked out since this morning. The login page just spins and nothing loads.",
+    "accept": ["technical"],
+    "expect_urgency": ["high"],
+    "purpose": "A clear outage. Also checks that a full lockout is rated high urgency."
+  },
+  {
+    "id": "sales-clear",
+    "message": "We're a team of 40 and thinking about switching. Do you offer volume pricing, and can someone give us a demo?",
+    "accept": ["sales"],
+    "purpose": "Purchase intent, not a problem report. Guards against sending everything to technical."
+  },
+  {
+    "id": "ambiguous-billing-or-technical",
+    "message": "I upgraded to Pro yesterday but my account still shows the free tier and export is still disabled.",
+    "accept": ["billing", "technical"],
+    "purpose": "Two defensible answers. Tests whether a failure is a judgment call or a real error."
+  },
+  {
+    "id": "not-support-unknown",
+    "message": "Hey, are we still on for lunch Thursday? I can do 12:30 at the usual place.",
+    "accept": ["unknown"],
+    "purpose": "Not a support request at all. Must come back unknown, not forced into a category."
+  }
+]
