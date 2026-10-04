@@ -27,8 +27,9 @@ def main(argv):
     path = argv[1] if len(argv) > 1 else "cases.json"
     with open(path, encoding="utf-8") as handle:
         cases = json.load(handle)
-    passed = tokens_in = tokens_out = 0
+    passed = tokens_in = tokens_out = thinking = 0
     seconds = 0.0
+    cost = None  # stays None unless the backend reports a cost
     for case in cases:
         out = classify.classify(case["message"])
         reply = out["reply"]
@@ -36,8 +37,12 @@ def main(argv):
         if reply:
             tokens_in += reply.tokens_in
             tokens_out += reply.tokens_out
+            thinking += reply.thinking
             seconds += reply.seconds
-            timing = "  (%.1fs, %d in / %d out)" % (reply.seconds, reply.tokens_in, reply.tokens_out)
+            if reply.cost is not None:
+                cost = (cost or 0.0) + reply.cost
+            timing = "  (%.1fs, %d in / %d out, %d thinking)" % (
+                reply.seconds, reply.tokens_in, reply.tokens_out, reply.thinking)
         if out["ok"]:
             problem = judge(case, out["result"])
             got = "%s/%s" % (out["result"]["category"], out["result"]["urgency"])
@@ -52,9 +57,9 @@ def main(argv):
         if out["fatal"]:
             print("stopping early: %s" % out["error"])
             break
-    print("SUMMARY backend=%s model=%s passed=%d/%d tokens_in=%d tokens_out=%d seconds=%.1f" % (
+    print("SUMMARY backend=%s model=%s passed=%d/%d tokens_in=%d tokens_out=%d thinking=%d cost=%s seconds=%.1f" % (
         classify.backend(), classify.os.environ.get("CHAT_MODEL", "?"), passed, len(cases),
-        tokens_in, tokens_out, seconds))
+        tokens_in, tokens_out, thinking, "n/a" if cost is None else "$%.4f" % cost, seconds))
     return 0 if passed == len(cases) else 1
 
 

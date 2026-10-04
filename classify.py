@@ -45,7 +45,9 @@ class ModelError(Exception):
 
 
 class Reply:
-    def __init__(self, text, tokens_in, tokens_out, finish_reason, seconds):
+    def __init__(self, text, tokens_in, tokens_out, finish_reason, seconds, cost=None, thinking=0):
+        self.cost = cost          # dollars at list price, when the backend reports it
+        self.thinking = thinking  # part of tokens_out spent on hidden reasoning
         self.text = text
         self.tokens_in = tokens_in
         self.tokens_out = tokens_out
@@ -98,8 +100,10 @@ def call_http(message, model_name):
     except (KeyError, IndexError, TypeError):
         raise ModelError("unexpected response shape: %s" % json.dumps(data)[:200])
     usage = data.get("usage") or {}
+    details = usage.get("completion_tokens_details") or {}
     return Reply(text, usage.get("prompt_tokens", 0), usage.get("completion_tokens", 0),
-                 choice.get("finish_reason"), time.time() - start)
+                 choice.get("finish_reason"), time.time() - start,
+                 cost=usage.get("cost"), thinking=details.get("reasoning_tokens") or 0)
 
 
 def call_cli(message, model_name):
@@ -129,8 +133,10 @@ def call_cli(message, model_name):
     usage = data.get("usage") or {}
     tokens_in = (usage.get("input_tokens", 0) + usage.get("cache_creation_input_tokens", 0)
                  + usage.get("cache_read_input_tokens", 0))
+    details = usage.get("output_tokens_details") or {}
     return Reply(data.get("result") or "", tokens_in, usage.get("output_tokens", 0),
-                 data.get("stop_reason"), time.time() - start)
+                 data.get("stop_reason"), time.time() - start,
+                 cost=data.get("total_cost_usd"), thinking=details.get("thinking_tokens") or 0)
 
 
 def extract_json(text):
@@ -208,7 +214,9 @@ def main(argv):
     out = classify(argv[1])
     reply = out["reply"]
     if reply:
-        print("tokens in=%d out=%d  %.1fs" % (reply.tokens_in, reply.tokens_out, reply.seconds), file=sys.stderr)
+        extra = "" if reply.cost is None else "  $%.4f" % reply.cost
+        print("tokens in=%d out=%d (thinking %d)  %.1fs%s" % (
+            reply.tokens_in, reply.tokens_out, reply.thinking, reply.seconds, extra), file=sys.stderr)
     if not out["ok"]:
         print("error: " + out["error"], file=sys.stderr)
         return 1

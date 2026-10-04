@@ -6,13 +6,13 @@ Implements [intent/classifier.md](intent/classifier.md).
 ## Components
 
 ### Support-message classifier (`classify.py`) and eval runner (`eval.py`)
-- **What it does:** `classify.py` takes one support message, asks a model to classify it, and prints one JSON object with `category`, `urgency`, and `reason`. `eval.py` reads five cases from `cases.json`, runs each through the same code, prints PASS or FAIL per case, and ends with a summary line (cases passed, tokens in and out).
+- **What it does:** `classify.py` takes one support message, asks a model to classify it, and prints one JSON object with `category`, `urgency`, and `reason`. `eval.py` reads five cases from `cases.json`, runs each through the same code, prints PASS or FAIL per case, and ends with a summary line (cases passed, tokens in and out, thinking tokens, and cost where the backend reports them).
 - **Language:** Python 3. **Why:** the standard library already has an HTTP client (`urllib.request`) and a JSON parser (`json`), so the whole program is one short file with no install or build step. The alternative was Java 21 as a single-file program: it also runs without a build tool, but Java's standard library has no JSON parser, so it would need either a jar or a hand-written parser that the spec would then have to justify. The trade-off is that Python gives up compile-time type checking, which is why the eval validates every field of the reply at run time.
 - **Model:** default `claude-haiku-4-5-20251001`, compared on the same five cases against `claude-sonnet-5`, both reached through the `claude` command-line tool in headless mode (`CHAT_BACKEND=claude-cli`). **Why:** the course template asks for a cheap model against a larger one on a real task, and both of these are available through the Claude subscription already in use, so no extra account or key is needed. The alternative was the class default through OpenRouter, `minimax/minimax-m3` against `xiaomi/mimo-v2.6-flash`, which needs an OpenRouter key the author does not have. The HTTP backend stays in the code as the default route, so the same eval can run against those models later. What differed between the two models is recorded in `CHECKS.md` after the runs, as observations, not as a ranking.
 - **Interfaces:**
   - Input: one message as a command-line argument.
   - Environment: `CHAT_BACKEND` (`http`, the default, or `claude-cli`) and `CHAT_MODEL`. The `http` backend also reads `CHAT_BASE_URL` (default `https://openrouter.ai/api/v1`) and `OPENROUTER_API_KEY`. The `claude-cli` backend needs only `CHAT_MODEL` and an existing Claude login.
-  - Output: the JSON object on stdout. Token counts go to stderr from `classify.py` and into the summary line from `eval.py`.
+  - Output: the JSON object on stdout. Token counts, thinking tokens, and cost (where the backend reports it) go to stderr from `classify.py` and into the summary line from `eval.py`.
   - Files: `cases.json` (the five cases), `CHECKS.md` (results).
 - **Dependencies:** none beyond Python 3 and either network access to a chat endpoint (`http`) or the `claude` command-line tool, already logged in (`claude-cli`).
 
